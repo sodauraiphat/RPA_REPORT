@@ -174,16 +174,14 @@ async function runRpa(daysToProcess = []) {
     //save the file locally
     await workbook.xlsx.writeFile(filePath);
 
+    // --- ONLY EXPORT TO THIS PATH ---
+    const finalDestination = "\\\\th-bp-filesvr.nwfth.com\\Production\\DPR\\" + fileName;
+
     try {
-     
-      const driveP = "P:\\Production\\DPR\\" + fileName; 
-      fs.copyFileSync(filePath, driveP);
-      console.log("Auto-exported to P: Drive");
-    } catch (e) {
-      console.log(" Drive P not found. Trying Network Path...");
-      
-      const uncPath = "\\\\192.168.0.14\\Public\\ChicagoReport\\" + fileName;
-      try { fs.copyFileSync(filePath, uncPath); } catch (i) { console.error("Export failed"); }
+      fs.copyFileSync(filePath, finalDestination);
+      console.log(`Successfully exported to: ${finalDestination}`);
+    } catch (exportErr) {
+      console.error(`Export failed: ${exportErr.message}`);
     }
 
     console.log(`completed ${fileName}`);
